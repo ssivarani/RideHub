@@ -55,6 +55,11 @@ path("vehicle/<int:vid>/", views.vehicle, name="vehicle"),
 path("payment/<int:bid>/",views.payment,name="payment"),
 path("contact/",views.contact,name="contact"),
 path("about/", views.about, name="about"),
+path(
+    "cancel-payment/<int:bid>/",
+    views.cancel_payment,
+    name="cancel_payment"
+),
 ]
 
 if settings.DEBUG:

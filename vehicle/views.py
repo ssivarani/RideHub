@@ -139,16 +139,29 @@ def signup(request):
 @login_required
 def user_dashboard(request):
     renter = Renter.objects.get(user=request.user)
-    total_bookings=Booking.objects.filter(user=request.user).count()
-    pending_bookings=Booking.objects.filter(user=request.user,status="Pending").count()
-    approved_bookings=Booking.objects.filter(user=request.user,status="Approved").count()
-    featured_vehicles=Vehicle.objects.filter(available=True).order_by("-id")[:3]
-    return render(request,"user_dashboard.html",{
+
+    total_bookings = Booking.objects.filter(
+        user=request.user,
+        payment_status="Paid"
+    ).count()
+
+    pending_bookings = Booking.objects.filter(
+        user=request.user,
+        payment_status="Paid",
+        status="Pending"
+    ).count()
+
+    approved_bookings = Booking.objects.filter(
+        user=request.user,
+        payment_status="Paid",
+        status="Approved"
+    ).count()
+
+    return render(request, "user_dashboard.html", {
         "renter": renter,
-        "total_bookings":total_bookings,
-        "pending_bookings":pending_bookings,
-        "approved_bookings":approved_bookings,
-        "featured_vehicles":featured_vehicles
+        "total_bookings": total_bookings,
+        "pending_bookings": pending_bookings,
+        "approved_bookings": approved_bookings,
     })
 
 # ---------------- OWNER DASHBOARD ----------------
@@ -156,34 +169,34 @@ def user_dashboard(request):
 @login_required
 def owner_dashboard(request):
     owner = Owner.objects.get(user=request.user)
-    vehicles=Vehicle.objects.filter(owner=request.user)
-    approved_bookings=Booking.objects.filter(
-        vehicle__owner=request.user,
-        status="Approved",
-        payment_status="Paid"
 
-    )
-    pending_bookings=Booking.objects.filter(
+    total_vehicles = Vehicle.objects.filter(owner=request.user).count()
+
+    pending_bookings = Booking.objects.filter(
         vehicle__owner=request.user,
+        payment_status="Paid",
         status="Pending"
     )
-    recent_bookings=Booking.objects.filter(
-        vehicle__owner=request.user
-    ).order_by("-booked_on")[:5]
 
-    recent_vehicles=vehicles.order_by("-id")[:4]
-    total_earnings=approved_bookings.aggregate(
-        Sum("total_price")
-    )["total_price__sum"] or 0
+    approved_bookings = Booking.objects.filter(
+        vehicle__owner=request.user,
+        payment_status="Paid",
+        status="Approved"
+    )
 
-    return render(request,"owner_dashboard.html",{
+    recent_bookings = approved_bookings.order_by("-booked_on")[:5]
+
+    recent_vehicles = Vehicle.objects.filter(
+        owner=request.user
+    ).order_by("-id")[:5]
+
+    return render(request, "owner_dashboard.html", {
         "owner": owner,
-        "total_vehicles":vehicles.count(),
-        "total_bookings":approved_bookings.count(),
-        "pending_requests":pending_bookings.count(),
-        "total_earnings":total_earnings,
-        "recent_bookings":recent_bookings,
-        "recent_vehicles":recent_vehicles
+        "total_vehicles": total_vehicles,
+        "pending_bookings": pending_bookings.count(),
+        "approved_bookings": approved_bookings.count(),
+        "recent_bookings": recent_bookings,
+        "recent_vehicles": recent_vehicles,
     })
 
 # ---------------- ADD VEHICLE ----------------
@@ -462,50 +475,59 @@ def logout_user(request):
 
 @login_required
 def user_profile(request):
-    renter=Renter.objects.get(user=request.user)
-    total_bookings=Booking.objects.filter(user=request.user).count()
-    approved=Booking.objects.filter(
+    renter = Renter.objects.get(user=request.user)
+
+    total_bookings = Booking.objects.filter(
         user=request.user,
+        payment_status="Paid"
+    ).count()
+
+    approved = Booking.objects.filter(
+        user=request.user,
+        payment_status="Paid",
         status="Approved"
     ).count()
-    pending=Booking.objects.filter(
+
+    pending = Booking.objects.filter(
         user=request.user,
+        payment_status="Paid",
         status="Pending"
     ).count()
-    return render(request,"user_profile.html",{
-        "renter":renter,
-        "total_bookings":total_bookings,
-        "approved":approved,
-        "pending":pending
+
+    return render(request, "user_profile.html", {
+        "renter": renter,
+        "total_bookings": total_bookings,
+        "approved": approved,
+        "pending": pending,
     })
 
 #----------OWNER_PROFILE------------
 
 @login_required
 def owner_profile(request):
-    owner=Owner.objects.get(user=request.user)
-    total_vehicles=Vehicle.objects.filter(owner=request.user).count()
-    approved_bookings=Booking.objects.filter(
+    owner = Owner.objects.get(user=request.user)
+
+    total_vehicles = Vehicle.objects.filter(
+        owner=request.user
+    ).count()
+
+    approved_bookings = Booking.objects.filter(
         vehicle__owner=request.user,
+        payment_status="Paid",
         status="Approved"
     ).count()
-    pending_requests=Booking.objects.filter(
+
+    pending_requests = Booking.objects.filter(
         vehicle__owner=request.user,
+        payment_status="Paid",
         status="Pending"
     ).count()
-    total_earnings=Booking.objects.filter(
-        vehicle__owner=request.user,
-        status="Approved",
-        payment_status="Paid"
-    ).aggregate(
-        Sum("total_price")
-    )["total_price__sum"] or 0
-    return render(request,"owner_profile.html",{
-        "owner":owner,
-        "total_vehicles":total_vehicles,
-        "approved_bookings":approved_bookings,
-        "pending_requests":pending_requests,
-        "total_earnings":total_earnings
+
+    return render(request, "owner_profile.html", {
+        "owner": owner,
+        "total_vehicles": total_vehicles,
+        "approved_bookings": approved_bookings,
+        "pending_requests": pending_requests,
     })
 
 @login_required
@@ -614,3 +636,16 @@ def payment(request, bid):
     return render(request,"payment.html",{
         "booking":booking
     })
+
+@login_required
+def cancel_payment(request, bid):
+    booking = Booking.objects.get(
+        id=bid,
+        user=request.user,
+        payment_status="Unpaid"
+    )
+
+    booking.delete()
+
+    messages.info(request, "Payment cancelled. Booking was removed.")
+    return redirect("all_vehicles")

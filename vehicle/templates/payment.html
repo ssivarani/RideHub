@@ -67,8 +67,8 @@ font-weight:600;
 <nav class="navbar navbar-expand-lg">
 <div class="container">
 <a class="navbar-brand">🚗 RideHub</a>
-<a href="{% url 'my_bookings' %}" class="btn btn-light">
-<i class="bi bi-arrow-left"></i> Back
+<a href="{% url 'cancel_payment' booking.id %}" class="btn btn-danger">
+    <i class="bi bi-x-circle"></i> Cancel Payment
 </a>
 </div>
 </nav>
