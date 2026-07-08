@@ -1,0 +1,99 @@
+{% extends 'owner_base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+<div class="col-lg-6">
+<div class="card shadow border-0">
+
+<div class="card-header bg-warning">
+<h3 class="mb-0">
+<i class="bi bi-person-gear"></i>
+Edit Profile
+</h3>
+</div>
+
+<div class="card-body">
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="text-center mb-4">
+
+{% if owner.profile_picture %}
+
+<img
+src="{{ owner.profile_picture.url }}"
+class="rounded-circle shadow mb-3"
+style="width:150px;height:150px;object-fit:cover;">
+
+{% else %}
+
+<img
+src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=198754&color=ffffff&size=150"
+class="rounded-circle shadow mb-3">
+
+{% endif %}
+
+</div>
+
+<div class="mb-3">
+<label class="form-label">
+<i class="bi bi-person-fill"></i>
+Username
+</label>
+<input
+type="text"
+name="username"
+class="form-control"
+value="{{ request.user.username }}"
+required>
+</div>
+
+<div class="mb-3">
+<label class="form-label">
+<i class="bi bi-envelope-fill"></i>
+Email
+</label>
+<input
+type="email"
+name="email"
+class="form-control"
+value="{{ request.user.email }}"
+required>
+</div>
+
+<div class="mb-4">
+<label class="form-label">
+<i class="bi bi-image-fill"></i>
+Profile Picture
+</label>
+
+<input
+type="file"
+name="profile_picture"
+class="form-control"
+accept="image/*">
+
+<small class="text-muted">
+Leave empty if you don't want to change the profile picture.
+</small>
+
+</div>
+
+<div class="d-grid">
+<button type="submit" class="btn btn-success">
+<i class="bi bi-check-circle-fill"></i>
+Save Changes
+</button>
+</div>
+
+</form>
+
+</div>
+
+</div>
+</div>
+</div>
+
+{% endblock %}

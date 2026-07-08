@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Vehicle Details</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark">
+<div class="container-fluid">
+<a class="navbar-brand fw-bold">Vehicle Details</a>
+<a href="{% url 'my_vehicles' %}" class="btn btn-light">Back</a>
+</div>
+</nav>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="container mt-5">
+
+<div class="row">
+
+<div class="col-md-5">
+<img src="{{ vehicle.image.url }}" class="img-fluid rounded shadow">
+</div>
+
+<div class="col-md-7">
+<div class="card shadow">
+<div class="card-body">
+
+<h2>{{ vehicle.company }}</h2>
+<h5 class="text-muted">{{ vehicle.model }}</h5>
+
+<hr>
+
+<p><strong>Vehicle Type :</strong> {{ vehicle.vehicle_type }}</p>
+<p><strong>Vehicle Number :</strong> {{ vehicle.number }}</p>
+<p><strong>Rent Per Day :</strong> ₹{{ vehicle.rent }}</p>
+
+<p>
+
+<strong>Status :</strong>
+{% if vehicle.available %}
+<span class="badge bg-success">Available</span>
+{% else %}
+<span class="badge bg-danger">Booked</span>
+{% endif %}
+
+</p>
+
+<hr>
+
+<div class="row text-center">
+
+<div class="col-6">
+<div class="border rounded p-3">
+<h5>Total Bookings</h5>
+<h2>{{ total_bookings }}</h2>
+</div>
+</div>
+
+<div class="col-6">
+<div class="border rounded p-3">
+<h5>Total Earnings</h5>
+<h2>₹{{ total_earnings }}</h2>
+</div>
+</div>
+
+</div>
+
+<div class="mt-4 d-flex gap-2">
+<a href="{% url 'edit_vehicle' vehicle.id %}" class="btn btn-warning flex-fill">
+Edit Vehicle
+</a>
+<a href="{% url 'delete_vehicle' vehicle.id %}" class="btn btn-danger flex-fill">
+Delete Vehicle
+</a>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="container mt-5">
+<div class="card shadow border-0 rounded-4">
+<div class="card-header bg-dark text-white py-3">
+<h4 class="mb-0"><i class="bi bi-chat-square-heart-fill text-warning"></i> Customer Reviews</h4>
+</div>
+<div class="card-body">
+<div class="text-center mb-5">
+{% if average_rating %}
+<div class="mx-auto rounded-circle d-flex flex-column justify-content-center align-items-center" style="width:180px;height:180px;background:linear-gradient(135deg,#FFD54F,#FF9800);border:8px solid #fff;box-shadow:0 12px 35px rgba(255,193,7,.45);">
+<div style="font-size:42px;">⭐</div>
+<h1 class="fw-bold mb-0">{{ average_rating|floatformat:1 }}</h1>
+<small class="fw-bold text-dark">Average Rating</small>
+</div>
+{% else %}
+<div class="alert alert-secondary rounded-4">No Ratings Yet</div>
+{% endif %}
+</div>
+{% for review in reviews %}
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+<div class="card-body">
+<div class="d-flex align-items-center">
+<div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center fw-bold fs-3 me-3" style="width:70px;height:70px;">
+{{ review.user.username|first|upper }}
+</div>
+<div class="flex-grow-1">
+<h5 class="mb-1">{{ review.user.username }}</h5>
+<div class="mb-2">
+{% for i in "12345" %}
+{% if forloop.counter <= review.rating %}
+<span class="text-warning fs-5">★</span>
+{% else %}
+<span class="text-secondary fs-5">☆</span>
+{% endif %}
+{% endfor %}
+</div>
+<small class="text-muted"><i class="bi bi-calendar-event"></i> {{ review.reviewed_on|date:"d M Y" }}</small>
+</div>
+</div>
+<hr>
+<p class="mb-0 fst-italic">“{{ review.comment }}”</p>
+</div>
+</div>
+{% empty %}
+<div class="text-center py-5">
+<i class="bi bi-chat-square-text display-3 text-secondary"></i>
+<h4 class="mt-3">No Reviews Yet</h4>
+<p class="text-muted">Be the first customer to leave a review for this vehicle.</p>
+</div>
+{% endfor %}
+</div>
+</div>
+</div>
+<!-- footer  -->
+ <footer class="bg-dark text-white py-4 mt-5">
+<div class="container text-center">
+<h5 class="fw-bold"><i class="bi bi-car-front-fill text-warning"></i> RideHub</h5>
+<p class="mb-2">Your trusted vehicle rental platform for Cars, Bikes and Autos.</p>
+<div class="mb-2">
+<a href="/" class="text-white text-decoration-none mx-2"><i class="bi bi-house-fill"></i> Home</a>
+<a href="{% url 'my_vehicles' %}" class="text-white text-decoration-none mx-2"><i class="bi bi-car-front-fill"></i> Vehicles</a>
+<a href="{% url 'contact' %}" class="text-white text-decoration-none mx-2"><i class="bi bi-envelope-fill"></i> Contact</a>
+</div>
+<hr class="border-secondary">
+<p class="mb-0">&copy; 2026 RideHub Vehicle Rental System. All Rights Reserved.</p>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

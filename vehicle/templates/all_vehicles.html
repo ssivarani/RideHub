@@ -1,0 +1,90 @@
+{% extends 'user_base.html' %}
+{% block content %}
+
+<h2 class="mb-4">Browse Vehicles</h2>
+<form method="GET">
+<div class="row mb-4">
+<div class="col-md-4">
+<input
+type="text"
+name="search"
+class="form-control"
+placeholder="Search by company or model"
+value="{{ request.GET.search }}">
+</div>
+
+<div class="col-md-3">
+<select name="type" class="form-select">
+<option value="">All Types</option>
+<option value="Car">Car</option>
+<option value="Bike">Bike</option>
+<option value="Auto">Auto</option>
+</select>
+</div>
+
+<div class="col-md-3">
+<input
+type="number"
+name="rent"
+class="form-control"
+placeholder="Maximum Rent"
+value="{{ request.GET.rent }}">
+</div>
+
+<div class="col-md-2 d-grid">
+<button class="btn btn-dark">
+Search
+</button>
+</div>
+
+</div>
+</form>
+
+<div class="row" id="vehicleContainer">
+{% for vehicle in vehicles %}
+<div class="col-lg-4 col-md-6 mb-4 vehicle-card" data-type="{{ vehicle.vehicle_type }}">
+<div class="card shadow-sm h-100 border-0">
+<img src="{{ vehicle.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;">
+<div class="card-body">
+<span class="badge bg-success mb-2">{{ vehicle.vehicle_type }}</span>
+<h4>{{ vehicle.company }}</h4>
+<h6 class="text-muted">{{ vehicle.model }}</h6>
+<p class="mb-2">
+<strong>Vehicle No:</strong><br>
+{{ vehicle.number }}
+</p>
+<h4 class="text-primary">₹{{ vehicle.rent }}/day</h4>
+
+<p class="mt-2">
+<strong>Status:</strong>
+{% if vehicle.is_booked %}
+<span class="badge bg-danger">Booked</span>
+{% else %}
+<span class="badge bg-success">Available</span>
+{% endif %}
+</p>
+
+<div class="d-grid mt-3">
+{% if vehicle.is_booked %}
+<button class="btn btn-secondary" disabled>
+Booked
+</button>
+{% else %}
+<a href="{% url 'book_vehicle' vehicle.id %}" class="btn btn-primary">
+Book Now
+</a>
+{% endif %}
+</div>
+
+</div>
+</div>
+</div>
+{% empty %}
+<div class="col-12">
+<div class="alert alert-info text-center">
+No Vehicles Available.
+</div>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

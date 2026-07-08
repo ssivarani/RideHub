@@ -1,0 +1,107 @@
+{% extends 'user_base.html' %}
+{% block content %}
+
+<h2>Dashboard</h2>
+<p class="text-muted">
+Browse and book your favourite vehicles.
+</p>
+<div class="row mt-4">
+<div class="col-md-4 mb-3">
+<div class="card shadow-sm dashboard-card">
+<div class="card-body text-center">
+<h6>Total Bookings</h6>
+<h2>{{ total_bookings }}</h2>
+</div>
+</div>
+</div>
+
+<div class="col-md-4 mb-3">
+<div class="card shadow-sm dashboard-card">
+<div class="card-body text-center">
+<h6>Pending</h6>
+<h2>{{ pending_bookings }}</h2>
+</div>
+</div>
+</div>
+
+<div class="col-md-4 mb-3">
+<div class="card shadow-sm dashboard-card">
+<div class="card-body text-center">
+<h6>Approved</h6>
+<h2>{{ approved_bookings }}</h2>
+</div>
+</div>
+</div>
+</div>
+
+<h3 class="mt-5 mb-3">Quick Actions</h3>
+<div class="row">
+
+<div class="col-md-4 mb-4">
+<div class="card shadow h-100 quick-card">
+<div class="card-body text-center">
+<h4>Browse Vehicles</h4>
+<p>Find cars, bikes and autos available for rent.</p>
+<a href="{% url 'all_vehicles' %}" class="btn btn-success">
+Browse
+</a>
+</div>
+</div>
+</div>
+
+<div class="col-md-4 mb-4">
+<div class="card shadow h-100 quick-card">
+<div class="card-body text-center">
+<h4>My Bookings</h4>
+<p>View your booking history.</p>
+<a href="{% url 'my_bookings' %}" class="btn btn-success">
+My Bookings
+</a>
+</div>
+</div>
+</div>
+
+<div class="col-md-4 mb-4">
+<div class="card shadow h-100 quick-card">
+<div class="card-body text-center">
+<h4>Profile</h4>
+<p>Manage your account.</p>
+<a href="{% url 'user_profile' %}" class="btn btn-info">
+View Profile
+</a>
+</div>
+</div>
+</div>
+</div>
+
+
+<h3 class="mt-5 mb-3">Featured Vehicles</h3>
+<div class="row">
+
+{% for vehicle in featured_vehicles %}
+
+<div class="col-md-4 mb-4">
+<div class="card shadow h-100">
+<img src="{{ vehicle.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;">
+<div class="card-body">
+<h5>{{ vehicle.company }} {{ vehicle.model }}</h5>
+<p>Type : {{ vehicle.vehicle_type }}</p>
+<p>₹{{ vehicle.rent }}/day</p>
+<a href="{% url 'vehicle' vehicle.id %}" class="btn btn-outline-primary w-100">
+View Details
+</a>
+</div>
+</div>
+</div>
+
+{% empty %}
+
+<div class="col-12">
+<div class="alert alert-info text-center">
+No vehicles available.
+</div>
+</div>
+
+{% endfor %}
+</div>
+{% endblock %}

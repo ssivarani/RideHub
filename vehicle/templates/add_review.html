@@ -1,0 +1,86 @@
+{% extends 'user_base.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow border-0">
+
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    {% if review %}
+                        View / Edit Review
+                    {% else %}
+                        Rate Your Vehicle
+                    {% endif %}
+                </h3>
+            </div>
+
+            <div class="card-body">
+
+                <div class="text-center mb-4">
+                    <img src="{{ booking.vehicle.image.url }}"
+                         class="img-fluid rounded"
+                         style="height:220px;object-fit:cover;">
+                    <h3 class="mt-3">
+                        {{ booking.vehicle.company }}
+                        {{ booking.vehicle.model }}
+                    </h3>
+                    <p class="text-muted">
+                        Booking Completed Successfully
+                    </p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Rating
+                        </label>
+
+                        <select name="rating" class="form-select" required>
+                            <option value="">Select Rating</option>
+                            <option value="5" {% if review and review.rating == 5 %}selected{% endif %}>
+                                ⭐⭐⭐⭐⭐ Excellent
+                            </option>
+                            <option value="4" {% if review and review.rating == 4 %}selected{% endif %}>
+                                ⭐⭐⭐⭐ Very Good
+                            </option>
+                            <option value="3" {% if review and review.rating == 3 %}selected{% endif %}>
+                                ⭐⭐⭐ Good
+                            </option>
+                            <option value="2" {% if review and review.rating == 2 %}selected{% endif %}>
+                                ⭐⭐ Fair
+                            </option>
+                            <option value="1" {% if review and review.rating == 1 %}selected{% endif %}>
+                                ⭐ Poor
+                            </option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Write Review
+                        </label>
+                        <textarea
+                            name="comment"
+                            rows="5"
+                            class="form-control"
+                            placeholder="Share your experience..."
+                            required>{% if review %}{{ review.comment }}{% endif %}</textarea>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-success">
+
+                            {% if review %}
+                                Update Review
+                            {% else %}
+                                Submit Review
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

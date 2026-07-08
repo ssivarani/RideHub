@@ -1,0 +1,102 @@
+<style>
+@media print{
+.sidebar,
+.navbar,
+footer,
+.btn{
+display:none !important;
+}
+.content{
+padding:0 !important;
+}
+.card{
+border:none !important;
+box-shadow:none !important;
+}
+}
+</style>
+{% extends 'user_base.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+<div class="col-md-8">
+<div class="card shadow">
+
+<div class="card-header bg-dark text-white text-center">
+<h2>RideHub Booking Receipt</h2>
+</div>
+
+<div class="card-body">
+<table class="table table-bordered">
+<tr>
+<th>Booking ID</th>
+<td>{{ booking.id }}</td>
+</tr>
+
+<tr>
+<th>Customer</th>
+<td>{{ booking.user.username }}</td>
+</tr>
+
+<tr>
+<th>Vehicle</th>
+<td>{{ booking.vehicle.company }} {{ booking.vehicle.model }}</td>
+</tr>
+
+<tr>
+<th>Vehicle Number</th>
+<td>{{ booking.vehicle.number }}</td>
+</tr>
+
+<tr>
+<th>From Date</th>
+<td>{{ booking.from_date }}</td>
+</tr>
+
+<tr>
+<th>To Date</th>
+<td>{{ booking.to_date }}</td>
+</tr>
+
+<tr>
+<th>Total Days</th>
+<td>{{ booking.days }}</td>
+</tr>
+
+<tr>
+<th>Rent / Day</th>
+<td>₹{{ booking.vehicle.rent }}</td>
+</tr>
+
+<tr>
+<th>Total Amount</th>
+<td><strong>₹{{ booking.total_price }}</strong></td>
+</tr>
+
+<tr>
+<th>Status</th>
+<td>{{ booking.status }}</td>
+</tr>
+
+<tr>
+<th>Booked On</th>
+<td>{{ booking.booked_on }}</td>
+</tr>
+
+</table>
+
+<div class="text-center mt-4">
+<button onclick="window.print()" class="btn btn-success">
+🖨 Print Receipt
+</button>
+<a href="{% url 'my_bookings' %}" class="btn btn-secondary">
+Back
+</a>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+{% endblock %}

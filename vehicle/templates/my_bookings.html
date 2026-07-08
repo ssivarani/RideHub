@@ -1,0 +1,124 @@
+{% extends 'user_base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">My Bookings</h2>
+
+    <div class="dropdown">
+        <button class="btn border-0 bg-transparent p-0"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+            <i class="bi bi-three-dots-vertical fs-4 text-dark"></i>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li><a class="dropdown-item" href="?status=all">All Bookings</a></li>
+            <li><a class="dropdown-item" href="?status=Pending">Pending</a></li>
+            <li><a class="dropdown-item" href="?status=Approved">Approved</a></li>
+            <li><a class="dropdown-item" href="?status=Rejected">Rejected</a></li>
+        </ul>
+    </div>
+</div>
+<div class="row">
+{% for b in bookings %}
+<div class="col-lg-6 mb-4">
+<div class="card shadow border-0 h-100">
+<img src="{{ b.vehicle.image.url }}" class="card-img-top" style="height:250px;object-fit:cover;">
+
+<div class="card-body">
+
+<h4>{{ b.vehicle.company }} {{ b.vehicle.model }}</h4>
+<p class="mb-1"><strong>Vehicle Type:</strong> {{ b.vehicle.vehicle_type }}</p>
+<p class="mb-1"><strong>Vehicle No:</strong> {{ b.vehicle.number }}</p>
+<p class="mb-1"><strong>From:</strong> {{ b.from_date }}</p>
+<p class="mb-1"><strong>To:</strong> {{ b.to_date }}</p>
+<p class="mb-1"><strong>Total Days:</strong> {{ b.days }}</p>
+
+<h5 class="text-success mt-3">
+₹{{ b.total_price }}
+</h5>
+
+{% if b.status == "Approved" %}
+<span class="badge bg-success">
+Approved
+</span>
+{% elif b.status == "Rejected" %}
+<span class="badge bg-danger">
+Rejected
+</span>
+{% else %}
+<span class="badge bg-warning text-dark">
+Pending
+</span>
+{% endif %}
+
+<div class="mt-3">
+
+{% if b.status == "Pending" %}
+<a href="{% url 'cancel_booking' b.id %}" class="btn btn-danger btn-sm">
+Cancel
+</a>
+{% elif b.status == "Approved" %}
+<div class="d-flex gap-2">
+    <a href="{% url 'add_review' b.id %}" class="btn btn-warning btn-sm">
+        {% if b.id in reviewed_ids %}
+            ⭐ View / Edit Review
+        {% else %}
+            ⭐ Add Review
+        {% endif %}
+    </a>
+    <a href="{% url 'booking_receipt' b.id %}" class="btn btn-primary btn-sm">
+        📄 Receipt
+    </a>
+</div>
+{% else %}
+<button class="btn btn-secondary btn-sm" disabled>
+No Action Available
+</button>
+{% endif %}
+
+</div>
+</div>
+</div>
+</div>
+{% empty %}
+
+<div class="col-12">
+    <div class="alert alert-info text-center">
+
+        {% if selected_status == "Pending" %}
+            <h4>No Pending Bookings</h4>
+            <p>You don't have any pending booking requests.</p>
+            <a href="{% url 'all_vehicles' %}" class="btn btn-primary">
+                Browse Vehicles
+            </a>
+
+        {% elif selected_status == "Approved" %}
+            <h4>No Approved Bookings</h4>
+            <p>You don't have any approved bookings yet.</p>
+            <a href="{% url 'all_vehicles' %}" class="btn btn-primary">
+                Browse Vehicles
+            </a>
+
+        {% elif selected_status == "Rejected" %}
+            <h4>No Rejected Bookings</h4>
+            <p>You don't have any rejected bookings.</p>
+            <a href="{% url 'all_vehicles' %}" class="btn btn-primary">
+                Browse Vehicles
+            </a>
+
+        {% else %}
+            <h4>No Bookings Yet</h4>
+            <p>Browse vehicles and make your first booking.</p>
+            <a href="{% url 'all_vehicles' %}" class="btn btn-primary">
+                Browse Vehicles
+            </a>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endfor %}
+</div>
+{% endblock %}

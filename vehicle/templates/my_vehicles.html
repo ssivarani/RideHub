@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Vehicles</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark">
+<div class="container-fluid">
+<a class="navbar-brand fw-bold">My Vehicles</a>
+<div>
+<a href="{% url 'add_vehicle' %}" class="btn btn-warning me-2">Add Vehicle</a>
+<a href="{% url 'owner_dashboard' %}" class="btn btn-light">Dashboard</a>
+</div>
+</div>
+</nav>
+
+<div class="container mt-4">
+<div class="row">
+    
+{% for v in vehicles %}
+<div class="col-lg-4 col-md-6 mb-4">
+<div class="card shadow h-100">
+<img src="{{ v.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;">
+<div class="card-body">
+<h4>{{ v.company }}</h4>
+<h6 class="text-muted">{{ v.model }}</h6>
+
+<hr>
+
+<p><strong>Type :</strong> {{ v.vehicle_type }}</p>
+<p><strong>Vehicle No :</strong> {{ v.number }}</p>
+<p><strong>Rent :</strong> ₹{{ v.rent }}/day</p>
+<p>
+<strong>Status :</strong>
+{% if v.available %}
+<span class="badge bg-success">Available</span>
+{% else %}
+<span class="badge bg-danger">Booked</span>
+{% endif %}
+</p>
+
+<div class="d-grid">
+<a href="{% url 'vehicle_details' v.id %}" class="btn btn-primary">
+View Details
+</a>
+</div>
+
+</div>
+</div>
+</div>
+
+{% empty %}
+
+<div class="col-12">
+<div class="alert alert-info text-center">
+<h4>No Vehicles Added Yet</h4>
+<p>Click the Add Vehicle button to start renting.</p>
+</div>
+</div>
+
+{% endfor %}
+
+</div>
+</div>
+</body>
+</html>

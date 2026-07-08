@@ -1,0 +1,79 @@
+{% extends 'user_base.html' %}
+{% block content %}
+
+<div class="row">
+<div class="col-lg-5">
+<div class="card shadow border-0">
+<img src="{{ vehicle.image.url }}" class="card-img-top" style="height:300px;object-fit:cover;">
+<div class="card-body">
+<h3>{{ vehicle.company }} {{ vehicle.model }}</h3>
+<p><strong>Type :</strong> {{ vehicle.vehicle_type }}</p>
+<p><strong>Vehicle No :</strong> {{ vehicle.number }}</p>
+<h4 class="text-success">₹{{ vehicle.rent }} / day</h4>
+</div>
+</div>
+</div>
+
+<div class="col-lg-7">
+<div class="card shadow border-0">
+<div class="card-header bg-primary text-white">
+<h4 class="mb-0">Book Vehicle</h4>
+</div>
+
+<div class="card-body">
+<form method="POST">
+{% csrf_token %}
+<div class="mb-3">
+<label class="form-label">From Date</label>
+<input type="date" id="from_date" name="from_date" class="form-control" required>
+</div>
+
+<div class="mb-3">
+<label class="form-label">To Date</label>
+<input type="date" id="to_date" name="to_date" class="form-control" required>
+</div>
+
+<hr>
+
+<h5>Total Days :
+<span id="days">0</span>
+</h5>
+
+<h4 class="text-success">
+Total Amount :
+₹<span id="amount">0</span>
+</h4>
+
+<hr>
+
+<button class="btn btn-primary w-100">
+Confirm Booking
+</button>
+
+</form>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+let rent = {{ vehicle.rent }};
+let today = new Date().toISOString().split("T")[0];
+document.getElementById("from_date").min = today;
+document.getElementById("to_date").min = today;
+function calculate() {
+
+    let from = new Date(document.getElementById("from_date").value);
+    let to = new Date(document.getElementById("to_date").value);
+
+    if (from && to && to >= from) {
+        let diff = (to - from) / (1000 * 60 * 60 * 24) + 1;
+        document.getElementById("days").innerHTML = diff;
+        document.getElementById("amount").innerHTML = diff * rent;
+    }
+}
+document.getElementById("from_date").addEventListener("change", calculate);
+document.getElementById("to_date").addEventListener("change", calculate);
+</script>
+
+{% endblock %}

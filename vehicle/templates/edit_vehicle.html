@@ -1,0 +1,56 @@
+{% extends 'owner_base.html' %}
+{% block content %}
+
+<h2>Edit Vehicle</h2>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="row">
+<div class="col-md-6 mb-3">
+<label>Vehicle Type</label>
+<select name="vehicle_type" class="form-control">
+<option value="Car" {% if vehicle.vehicle_type == "Car" %}selected{% endif %}>Car</option>
+<option value="Bike" {% if vehicle.vehicle_type == "Bike" %}selected{% endif %}>Bike</option>
+<option value="Auto" {% if vehicle.vehicle_type == "Auto" %}selected{% endif %}>Auto</option>
+</select>
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Company</label>
+<input type="text" name="company" class="form-control" value="{{ vehicle.company }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Model</label>
+<input type="text" name="model" class="form-control" value="{{ vehicle.model }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Vehicle Number</label>
+<input type="text" name="number" class="form-control" value="{{ vehicle.number }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Rent Per Day</label>
+<input type="number" name="rent" class="form-control" value="{{ vehicle.rent }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Change Image (Optional)</label>
+<input type="file" name="image" class="form-control">
+</div>
+
+</div>
+
+<button class="btn btn-success">
+Update Vehicle
+</button>
+
+<a href="{% url 'vehicle_details' vehicle.id %}" class="btn btn-secondary">
+Cancel
+</a>
+
+</form>
+
+{% endblock %}
